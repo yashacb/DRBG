@@ -1,0 +1,17 @@
+{
+  "name": "drbg",
+  "version": "1.0.0",
+  "description": "",
+  "main": "aes.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aes-js": "^3.1.0",
+    "js-sha256": "^0.9.0",
+    "math-float32-to-binary-string": "^1.0.0",
+    "systeminformation": "^3.37.7"
+  }
+}
