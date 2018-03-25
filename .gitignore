@@ -1,0 +1,5 @@
+node_modules/
+ou*
+nums
+test*
+package-lock.json
