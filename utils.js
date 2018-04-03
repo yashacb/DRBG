@@ -17,7 +17,7 @@ let getEntropy = async (bits) => {
     try{
         let rawBits = await entropy(bits);
         let rawBytes = binStringToBytes(rawBits);
-        return sha256.array(rawBits);
+        return sha256.array(rawBytes);
     }
     catch(err){
         return err.toString();

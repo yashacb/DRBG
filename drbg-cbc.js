@@ -8,24 +8,17 @@ function Drbg(){
     this.totalCount = 0;
 
     this.init = async () => {
-        let entropyIp = await getEntropy(256);
-        let key = entropyIp.slice(0, 16), iv = entropyIp.slice(16, 32);
-        let nonce = Array.from(aesjs.utils.utf8.toBytes(pad(Date.now().toString(), 16)));
+        let entropyIp1 = await getEntropy(256);
+        let entropyIp2 = await getEntropy(256);
+        let key = entropyIp1.slice(0, 16), iv = entropyIp1.slice(16, 32);
         
         this.key = key;
-        this.var = iv.concat(nonce);
-        this.aesCtr = new aesjs.ModeOfOperation.ctr(this.key);
+        this.var = entropyIp2;
+        this.aesCbc = new aesjs.ModeOfOperation.cbc(this.key, iv);
     };
 
     this.reseed = async () => {
-        this.usageCount = 0;
-
-        let entropyIp = await getEntropy(256);
-        let key = entropyIp.slice(0, 16), newIv = entropyIp.slice(16, 32);
-        
-        this.key = key;
-        this.var = newIv.concat(Array.from(this.var).slice(0, 16));
-        this.aesCtr = new aesjs.ModeOfOperation.ctr(this.key);
+        this.init();
     };
 
     this.generate = async () => {
@@ -37,7 +30,7 @@ function Drbg(){
         this.totalCount++;
         this.usageCount++;
 
-        let resBytes = this.aesCtr.encrypt(this.var), resStr = '';
+        let resBytes = this.aesCbc.encrypt(this.var), resStr = '';
         this.var = resBytes;
         
         for(let i = 0; i < resBytes.length; i++){
@@ -56,12 +49,14 @@ function Drbg(){
     };
 }
 
+const numRandoms = parseInt(process.argv[2]);
+
 let test = async () => {
     try{
         let res = [];
         let a = new Drbg();
         await a.init();
-        while(res.length <= 1000){
+        while(res.length <= numRandoms){
             let nums = await a.generateNums();
             res = res.concat(nums);
         }
